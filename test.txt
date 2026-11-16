@@ -40,4 +40,527 @@ if index != -1:
 else:
     print("Account not found")
 
------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+
+# Experiment 2: Employee Salary Sorting (Selection Sort and Bubble Sort)
+n = int(input("Enter number of employees: "))
+
+salary = []
+for i in range(n):
+    s = float(input("Enter salary of employee " + str(i + 1) + ": "))
+    salary.append(s)
+
+
+salary1 = salary.copy()   # will be sorted using Selection Sort
+salary2 = salary.copy()   # will be sorted using Bubble Sort
+
+#Selection Sort 
+for i in range(n - 1):
+    small = i                     
+    for j in range(i + 1, n):
+        if salary1[j] < salary1[small]:
+            small = j              
+    
+    temp = salary1[i]
+    salary1[i] = salary1[small]
+    salary1[small] = temp
+
+#Bubble Sort
+for i in range(n - 1):
+    for j in range(n - 1 - i):
+        if salary2[j] > salary2[j + 1]:
+        
+            temp = salary2[j]
+            salary2[j] = salary2[j + 1]
+            salary2[j + 1] = temp
+
+
+print("\nSalaries after Selection Sort:", salary1)
+print("Salaries after Bubble Sort:", salary2)
+
+
+print("\nTop 5 highest salaries:")
+count = 0
+for i in range(n - 1, -1, -1):
+    if count == 5:
+        break
+    print(count + 1, ".", salary1[i])
+    count = count + 1
+
+-------------------------------------------------------------------------------------------------------------------------
+
+# Experiment 3: Undo/Redo System Using Stack
+undo_stack=[]
+redo_stack=[]
+document=""
+
+def make_change():
+    global document
+    undo_stack.append(document)
+
+    new_text=input("Enter your change:")
+    document+=new_text
+
+    redo_stack.clear()
+    print("Changes made to the document.")
+
+def undo():
+    global document
+    if len(undo_stack)==0:
+        print("No change to undo")
+
+    else:
+        redo_stack.append(document)
+        document=undo_stack.pop()
+        print("Undo successful.")
+
+def redo():
+    global document
+    if len(redo_stack)==0:
+        print("No change to redo")
+
+    else:
+        undo_stack.append(document)
+        document=redo_stack.pop()
+        print("Redo successful.")
+
+while True:
+    print("\nCurrent document:",document)
+    print("1. Make a change")
+    print("2. Undo")
+    print("3. Redo")
+    print("4. Exit")
+
+    choice=int(input("Enter your choice:"))
+
+    if choice==1:
+        make_change()
+    elif choice==2:
+        undo()  
+    elif choice==3:
+        redo()
+    elif choice==4:
+        print("Exiting the program.")
+        break
+    else:
+        print("Invalid choice. Please try again.")        
+
+---------------------------------------------------------------------------------------------------------
+
+# Experiment 4: Student Record Management Using Singly Linked List
+class Node:
+    def __init__(self, roll, name, marks):
+        self.roll = roll
+        self.name = name
+        self.marks = marks
+        self.next = None
+ 
+ 
+class StudentList:
+    def __init__(self):
+        self.head = None
+ 
+    def add(self, roll, name, marks):
+        new_node = Node(roll, name, marks)
+        if self.head is None:
+            self.head = new_node
+            return
+        temp = self.head
+        while temp.next is not None:
+            temp = temp.next
+        temp.next = new_node
+ 
+    def search(self, roll):
+        temp = self.head
+        while temp is not None:
+            if temp.roll == roll:
+                return temp
+            temp = temp.next
+        return None
+ 
+    def delete(self, roll):
+        temp = self.head
+        previous = None
+        while temp is not None and temp.roll != roll:
+            previous = temp
+            temp = temp.next
+        if temp is None:
+            print("Student Not Found")
+            return
+        if previous is None:            # deleting the first node
+            self.head = temp.next
+        else:
+            previous.next = temp.next
+ 
+    def update(self, roll, new_name, new_marks):
+        student = self.search(roll)
+        if student is None:
+            print("Student Not Found")
+        else:
+            student.name = new_name
+            student.marks = new_marks
+ 
+    def sort(self, descending=False):
+        # Bubble sort on the linked list (swap the data, not the nodes)
+        swapped = True
+        while swapped:
+            swapped = False
+            temp = self.head
+            while temp is not None and temp.next is not None:
+                if descending:
+                    wrong_order = temp.marks < temp.next.marks
+                else:
+                    wrong_order = temp.marks > temp.next.marks
+                if wrong_order:
+                    temp.roll, temp.next.roll = temp.next.roll, temp.roll
+                    temp.name, temp.next.name = temp.next.name, temp.name
+                    temp.marks, temp.next.marks = temp.next.marks, temp.marks
+                    swapped = True
+                temp = temp.next
+ 
+    def display(self):
+        temp = self.head
+        while temp is not None:
+            print(" [" + str(temp.roll) + ", " + temp.name + ", " + str(temp.marks) + "]", end=" ->")
+            temp = temp.next
+        print(" NULL")
+ 
+ 
+students = StudentList()
+students.add(101, "Amit", 85)
+students.add(102, "Ravi", 72)
+students.add(103, "Neha", 91)
+students.add(104, "Sara", 64)
+ 
+print("Records:")
+students.display()
+ 
+found = students.search(103)
+print("Search 103:", found.name, found.marks)
+ 
+students.update(102, "Ravi", 78)
+print("After update of 102:")
+students.display()
+ 
+students.delete(104)
+print("After delete of 104:")
+students.display()
+ 
+students.sort()
+print("Ascending by marks:")
+students.display()
+ 
+students.sort(descending=True)
+print("Descending by marks:")
+students.display()
+ 
+students.delete(999)
+ -------------------------------------------------------------------------------------------------------------------------------
+ # Experiment 5: Hash Table Using Division Method and Chaining
+
+size=10
+hash_table=[[] for i in range(size)]
+
+def insert(key,value):
+    index=key%size
+
+    hash_table[index].append((key,value))
+    print("Key-value pair inserted at index:", index)
+    return
+
+def search(key):
+    index=key%size
+
+    for k,v in hash_table[index]:
+        if k==key:
+            print("Key found at index:", index, "with value:", v)
+            return
+    print("Key not found in the hash table.")
+
+def delete(key):
+    index=key%size
+
+    for item in hash_table[index]:
+        if item[0]==key:
+            hash_table[index].remove(item)
+            print("Key deleted from the hash table.")
+            return
+    print("Key not found in the hash table.")    
+
+
+def display():
+    print("Hash Table content:")
+    for i in range(size):
+        print(i,":",hash_table[i])
+
+while True:
+    print("\nHash Table Menu:")
+    print("1. Insert Key-Value Pair")
+    print("2. Search Key")
+    print("3. Delete Key")
+    print("4. Display Hash Table")
+    print("5. Exit")
+
+    choice=int(input("Enter your choice:"))
+
+    if choice==1:
+        key=int(input("Enter the key to insert:"))
+        value=input("Enter the value to insert:")
+        insert(key,value)
+    elif choice==2:
+        key=int(input("Enter the key to search:"))
+        search(key)
+    elif choice==3:
+        key=int(input("Enter the key to delete:"))
+        delete(key)
+    elif choice==4:
+        display()
+    elif choice==5:
+        print("Exiting the program.")
+        break
+    else:
+        print("Invalid choice. Please try again.")        
+--------------------------------------------------------------------------------------------------------------
+size=10
+hash_table=[-1]*size
+
+def insert():
+    key=int(input("Enter the key to insert:"))
+    index=key%size
+
+    for i in range(size):
+        new_index=(index+i)%size
+        if hash_table[new_index]==-1:
+            hash_table[new_index]=key
+            print("Key inserted at index:", new_index)
+            return
+    print("Hash table is full.")
+
+def search():
+    key=int(input("Enter the key to search:"))
+    index=key%size
+
+    for i in range(size):
+        new_index=(index+i)%size
+        if hash_table[new_index]==key:
+            print("Key found at index:", new_index)
+            return
+        print("Key not found in the hash table.")
+
+def delete():
+    key=int(input("Enter the key to delete:"))
+    index=key%size
+
+    for i in range(size):
+        new_index=(index+i)%size
+
+        if hash_table[new_index]==key:
+            hash_table[new_index]=-1
+            print("Key deleted from the hash table.")
+            return
+        print("Key not found in the hash table.")
+
+def display():
+    print("Hash Table content:")
+    for i in range(size):
+        print(i,":",hash_table[i])
+
+while True:
+    print("\nHash Table Menu:")
+    print("1. Insert Key")
+    print("2. Search Key")
+    print("3. Delete Key")
+    print("4. Display Hash Table")
+    print("5. Exit")
+
+    choice=int(input("Enter your choice:"))
+
+    if choice==1:
+        insert()
+    elif choice==2:
+        search()
+    elif choice==3:
+        delete()
+    elif choice==4:
+        display()
+    elif choice==5:
+        print("Exiting the program.")
+        break
+    else:
+        print("Invalid choice. Please try again.") 
+--------------------------------------------------------------------------------------------
+# Experiment 7: BFS and DFS Traversal of a Graph
+vertex=["A","B","C","D","E"]
+
+matrix=[
+    [0,1,1,0,0],
+    [1,0,0,1,1],
+    [1,0,0,1,0],
+    [0,1,1,0,1],
+    [0,1,0,1,0]    
+]
+
+visited=[False]*len(vertex)
+
+def dfs(v):
+    print(vertex[v],end=" ")
+    visited[v]=True
+
+    for i in range(len(vertex)):
+        if matrix[v][i]==1 and visited[i]==False:
+            dfs(i)
+
+print("DFS Traversal:")
+dfs(0)
+
+graph={
+      "A":["B","C"],
+      "B":["A","D","E"],
+      "C":["A","D"],
+      "D":["B","C","E"],
+      "E":["B","D"]  
+}
+
+visited=[]
+queue=[]
+
+def bfs(start):
+    visited.append(start)
+    queue.append(start)
+
+    while queue:
+        vertex=queue.pop(0)
+        print(vertex,end=" ")
+
+        for neighbor in graph[vertex]:
+            if neighbor not in visited:
+                visited.append(neighbor)
+                queue.append(neighbor)
+
+print("\nBFS Traversal:")
+bfs("A")
+-------------------------------------------------------------------------------------------------------
+# Experiment 8: Binary Search Tree Operations
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+
+def insert(root, data):
+    if root is None:
+        return Node(data)
+
+    if data < root.data:
+        root.left = insert(root.left, data)
+
+    elif data > root.data:
+        root.right = insert(root.right, data)
+
+    else:
+        print("Duplicate value not allowed")
+
+    return root
+
+
+def search(root, key):
+    if root is None:
+        return False
+
+    if root.data == key:
+        return True
+
+    elif key < root.data:
+        return search(root.left, key)
+
+    else:
+        return search(root.right, key)
+
+
+def inorder(root):
+    if root is not None:
+        inorder(root.left)
+        print(root.data, end=" ")
+        inorder(root.right)
+
+
+def delete(root, key):
+    if root is None:
+        return None
+
+    if key < root.data:
+        root.left = delete(root.left, key)
+
+    elif key > root.data:
+        root.right = delete(root.right, key)
+
+    else:
+        # Case 1: No child
+        if root.left is None and root.right is None:
+            return None
+
+        # Case 2: One child
+        elif root.left is None:
+            return root.right
+
+        elif root.right is None:
+            return root.left
+
+        # Case 3: Two children
+        else:
+            temp = root.right
+
+            while temp.left is not None:
+                temp = temp.left
+
+            root.data = temp.data
+            root.right = delete(root.right, temp.data)
+
+    return root
+
+
+root = None
+
+while True:
+    print("\n--- Binary Search Tree ---")
+    print("1. Insert")
+    print("2. Delete")
+    print("3. Search")
+    print("4. Display")
+    print("5. Exit")
+
+    choice = int(input("Enter your choice: "))
+
+    if choice == 1:
+        data = int(input("Enter value to insert: "))
+        root = insert(root, data)
+
+    elif choice == 2:
+        data = int(input("Enter value to delete: "))
+        root = delete(root, data)
+        print("Deletion operation completed")
+
+    elif choice == 3:
+        data = int(input("Enter value to search: "))
+
+        if search(root, data):
+            print("Value found")
+        else:
+            print("Value not found")
+
+    elif choice == 4:
+        if root is None:
+            print("Tree is empty")
+        else:
+            print("BST in sorted order:")
+            inorder(root)
+            print()
+
+    elif choice == 5:
+        print("Program terminated")
+        break
+
+    else:
+        print("Invalid choice")
